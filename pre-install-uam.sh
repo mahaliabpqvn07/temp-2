@@ -1,6 +1,11 @@
 #!/bin/sh
 sudo apt update
-sudo apt install nload && sudo apt install docker.io -y && sudo sed -ie 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1'/g /etc/sysctl.conf && sudo sysctl --system && sudo apt install docker-compose -y
+sudo apt update && \
+sudo apt -o Dpkg::Options::="--force-confold" install -y nload && \
+sudo apt -o Dpkg::Options::="--force-confold" install -y docker.io && \
+sudo sed -i -e 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/' /etc/sysctl.conf && \
+sudo sysctl --system && \
+sudo apt -o Dpkg::Options::="--force-confold" install -y docker-compose
 sudo chmod 666 /var/run/docker.sock
 sudo iptables -F
 sudo iptables -A INPUT -p all -j ACCEPT
