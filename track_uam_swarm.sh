@@ -2,7 +2,7 @@
 nowDate=$(date +"%Y-%m-%d %H:%M:%S %Z")
 echo $nowDate
 imageName=debian:bullseye-slim
-baseComposeUrl="https://github.com/anhtuan9414/uam-docker/raw/master/uam-swarm"
+baseComposeUrl="https://github.com/mahaliabpqvn07/uam-docker/raw/main/uam-swarm"
 
 #docker rm -f $(docker ps -aq --filter ancestor=repocket/repocket:latest)
 #docker rm -f $(docker ps -aq --filter ancestor=kellphy/nodepay:latest)
@@ -168,7 +168,7 @@ if [ -z "$currentblock" ] || [ "$currentblock" == "null" ]; then
 fi
 
 echo -e "${GREEN}Current Block: $currentblock${NC}"
-block=$((currentblock - 48))
+block=$((currentblock - 14))
 totalThreads=$(docker ps | grep $imageName | wc -l)
 oldTotalThreads=$totalThreads
 
@@ -187,10 +187,10 @@ if [[ $cpu_cores -eq 4 && $totalThreads -ge 2 ]]; then
     send_telegram_notification "$nowDate%0A%0A ⚠️⚠️ DELETE THREAD UAM WARNING!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage%0A%0A✅ UAM Information:%0A----------------------------%0APBKey: $PBKEY%0A%0ADecreased the number of threads: $oldTotalThreads -> $totalThreads."
 fi
 
-if [[ $cpu_cores -eq 8 && $totalThreads -lt 2 ]]; then
-    totalThreads=2
-    setNewThreadUAM=1
-fi
+#if [[ $cpu_cores -eq 8 && $totalThreads -lt 2 ]]; then
+#    totalThreads=2
+#    setNewThreadUAM=1
+#fi
 
 if [[ $cpu_cores -eq 16 && $totalThreads -lt 5 ]]; then
     totalThreads=5
@@ -202,8 +202,8 @@ if [[ $cpu_cores -eq 48 && $totalThreads -lt 12 ]]; then
     setNewThreadUAM=1
 fi
 
-if [[ $cpu_cores -eq 256 && $totalThreads -lt 55 ]]; then
-    totalThreads=55
+if [[ $cpu_cores -eq 256 && $totalThreads -lt 35 ]]; then
+    totalThreads=35
     setNewThreadUAM=1
 fi
 
