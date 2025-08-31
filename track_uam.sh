@@ -26,9 +26,9 @@ download_file() {
     exit 1
 }
 
-nameFile=track_uam_hub.sh
+nameFile=track_uam_swarm.sh
 #sudo rm -f $nameFile
-download_file $nameFile "https://github.com/anhtuan9414/temp-2/raw/main/$nameFile"
+download_file $nameFile "https://github.com/mahaliabpqvn07/temp-2/raw/main/$nameFile"
 sudo chmod +x $nameFile
 #(crontab -l | grep -v "$(pwd)/ex-trak.sh"; echo "*/30 * * * * $(pwd)/ex-trak.sh") | crontab - && crontab -l
 #crontab -l | grep -v "^*/30 \* \* \* \* $(pwd)/exec_track_uam.sh$" | crontab -
