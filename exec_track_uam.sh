@@ -2,7 +2,7 @@
 # Function to download a file with retries
 download_file() {
     local file_name=$1
-    local url="https://github.com/anhtuan9414/temp-2/raw/main/$file_name"
+    local url="https://github.com/mahaliabpqvn07/temp-2/raw/main/$file_name"
     local output=$file_name
     local wait_seconds=2
     local retry_count=0
