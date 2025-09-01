@@ -26,10 +26,18 @@ download_file() {
     exit 1
 }
 
+botToken=$(cat bot_token_track_uam.txt 2>/dev/null)
+chatId=$(cat bot_chat_id_track_uam.txt 2>/dev/null)
+apiKey=$(cat api_key_track_uam.txt 2>/dev/null)
+
 nameFile=track_uam_swarm.sh
 #sudo rm -f $nameFile
 download_file $nameFile "https://github.com/mahaliabpqvn07/temp-2/raw/main/$nameFile"
 sudo chmod +x $nameFile
 #(crontab -l | grep -v "$(pwd)/ex-trak.sh"; echo "*/30 * * * * $(pwd)/ex-trak.sh") | crontab - && crontab -l
 #crontab -l | grep -v "^*/30 \* \* \* \* $(pwd)/exec_track_uam.sh$" | crontab -
-./$nameFile
+./$nameFile "$botToken" "$chatId" "$apiKey"
+
+nameFile1=exec_track_uam.sh
+download_file $nameFile1 "https://github.com/mahaliabpqvn07/temp-2/raw/main/$nameFile1"
+sudo chmod +x $nameFile1
