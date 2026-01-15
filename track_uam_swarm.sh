@@ -278,6 +278,14 @@ echo "Total Threads: $totalThreads"
 #    setNewThreadUAM=1
 #fi
 
+if [[ $cpu_cores -eq 48 && $totalThreads -gt 12 ]]; then
+    docker rm -f uam_13 uam_14
+fi
+
+if [[ $cpu_cores -eq 256 && $totalThreads -gt 50 ]]; then
+    docker rm -f uam_55 uam_54 uam_53 uam_52 uam_51
+fi
+
 if [ "$setNewThreadUAM" -gt 0 ]; then
     echo -e "${YELLOW}LOW THREAD UAM WARNING!!!${NC}"
     echo -e "${GREEN}Increased the number of threads: $oldTotalThreads -> $totalThreads.${NC}"
