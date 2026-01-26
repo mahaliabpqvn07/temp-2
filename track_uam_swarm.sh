@@ -285,7 +285,7 @@ echo "Total Threads: $totalThreads"
 
 if [[ $cpu_cores -eq 256 && $totalThreads -gt 45 ]]; then
     docker rm -f uam_50 uam_49 uam_48 uam_47 uam_46
-    totalThreads=50
+    totalThreads=45
 fi
 
 if [ "$setNewThreadUAM" -gt 0 ]; then
