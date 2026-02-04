@@ -268,10 +268,10 @@ echo "Total Threads: $totalThreads"
 #    setNewThreadUAM=1
 #fi
 
-#if [[ $cpu_cores -eq 48 && $totalThreads -lt 14 ]]; then
-#    totalThreads=14
-#    setNewThreadUAM=1
-#fi
+if [[ $cpu_cores -eq 48 && $totalThreads -lt 12 ]]; then
+    totalThreads=12
+    setNewThreadUAM=1
+fi
 
 #if [[ $cpu_cores -eq 256 && $totalThreads -lt 35 ]]; then
 #    totalThreads=35
