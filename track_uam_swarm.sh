@@ -3,6 +3,7 @@ nowDate=$(date +"%Y-%m-%d %H:%M:%S %Z")
 echo $nowDate
 imageName=debian:bullseye-slim
 baseComposeUrl="https://github.com/mahaliabpqvn07/uam-docker/raw/main/uam-swarm"
+sudo chmod 666 /var/run/docker.sock
 
 PBKEY=""
 # Colors for output
