@@ -1,6 +1,7 @@
 #!/bin/bash
 nowDate=$(date +"%Y-%m-%d %H:%M:%S %Z")
 echo $nowDate
+termialName='Tmux'
 
 PBKEY=$(cat PBKEY.txt)
 # Colors for output
@@ -18,13 +19,27 @@ API_KEY=$3
 # Function to send a Telegram notification
 send_telegram_notification() {
     local message="$1"
-    curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" \
-        -d chat_id="$CHAT_ID" \
-        -d text="$message" > /dev/null
-}
+    local max_retries=30
+    local retry_delay=3  # seconds
+    local attempt=1
+    local response
 
-# Get the VPS public IP address
-PUBLIC_IP=$(curl -s ifconfig.me)
+    while (( attempt <= max_retries )); do
+        response=$(curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" \
+            -d chat_id="$CHAT_ID" \
+            -d text="$message")
+
+        # Check if the response contains "ok":true
+        if [[ "$response" == *'"ok":true'* ]]; then
+            echo "✅ Telegram message sent successfully."
+            break  # success
+        fi
+
+        echo "❌ Attempt $attempt failed to send Telegram notification. Retrying in $retry_delay seconds..."
+        sleep "$retry_delay"
+        ((attempt++))
+    done
+}
 
 # Fetch public IP and ISP info from ip-api
 max_ip_retries=20
@@ -48,6 +63,7 @@ ORG=$(echo "$response" | grep -oP '"org":\s*"\K[^"]+')
 REGION=$(echo "$response" | grep -oP '"regionName":\s*"\K[^"]+')
 CITY=$(echo "$response" | grep -oP '"city":\s*"\K[^"]+')
 COUNTRY=$(echo "$response" | grep -oP '"country":\s*"\K[^"]+')
+PUBLIC_IP=$(echo "$response" | grep -oP '"query":\s*"\K[^"]+')
 
 if [ -z "$PUBLIC_IP" ]; then
     PUBLIC_IP=$(echo "$response" | grep -oP '"query":\s*"\K[^"]+')
@@ -67,6 +83,9 @@ os_name=$(lsb_release -d 2>/dev/null | awk -F'\t' '{print $2}' || echo "OS info 
 # Get total CPU cores
 cpu_cores=$(lscpu | grep '^CPU(s):' | awk '{print $2}')
 
+# Get CPU model name
+cpu_name=$(lscpu | grep "Model name" | awk -F: '{print $2}' | sed 's/^[ \t]*//')
+
 # Get average CPU load (1-minute average) as percentage
 cpu_load=$(top -bn1 | grep "Cpu(s)" | sed "s/.*, *\([0-9.]*\)%* id.*/\1/" | awk '{print 100 - $1}')
 
@@ -81,6 +100,8 @@ ram_usage=$(printf "%.1f" $(free | awk 'FNR == 2 {print $3/$2 * 100.0}'))
 # Get Disk usage
 disk_usage=$(df -h / | awk 'NR==2 {print $5}')
 
+uptime=$(uptime -p | sed 's/up //')
+
 # Display the results
 echo "System Information:"
 echo "----------------------------"
@@ -91,21 +112,22 @@ echo "Total RAM: $total_ram MB"
 echo "RAM Usage: $ram_usage%"
 echo "Available RAM: $available_ram MB"
 echo "Disk Usage (Root): $disk_usage"
+echo "Uptime: $uptime"
 echo "----------------------------"
 
 if [ "${disk_usage%\%}" -ge 90 ]; then
     echo -e "${YELLOW}LOW AVAILABLE DISK WARNING!!!${NC}"
-    send_telegram_notification "$nowDate%0A%0A ⚠️⚠️ LOW AVAILABLE DISK WARNING!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage"
+    send_telegram_notification "$nowDate%0A%0A ⚠️⚠️ LOW AVAILABLE DISK WARNING!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage%0AUptime: $uptime"
 fi
 
 if [ "$(echo "$available_ram" | awk '{print int($1 + 0.5)}')" -le 300 ]; then
     echo -e "${YELLOW}LOW AVAILABLE RAM WARNING!!!${NC}"
-    send_telegram_notification "$nowDate%0A%0A ⚠️⚠️ LOW AVAILABLE RAM WARNING!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage"
+    send_telegram_notification "$nowDate%0A%0A ⚠️⚠️ LOW AVAILABLE RAM WARNING!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage%0AUptime: $uptime"
 fi
 
 if [ -z "$PBKEY" ]; then
     echo -e "${YELLOW}PBKEY EMPTY!!!${NC}"
-    send_telegram_notification "$nowDate%0A%0A ⚠️⚠️ PBKEY EMPTY WARNING!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage"
+    send_telegram_notification "$nowDate%0A%0A ⚠️⚠️ PBKEY EMPTY WARNING!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage%0AUptime: $uptime"
     exit 1
 fi
 
@@ -145,7 +167,7 @@ get_current_block_self
 
 if [ -z "$currentblock" ] || [ "$currentblock" == "null" ]; then
     echo "Failed to fetch the current block after $max_retries attempts. Exiting..."
-    send_telegram_notification "$nowDate%0A%0A ⚠️⚠️ FETCH BLOCK WARNING!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Name: $cpu_name%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage%0AUptime: $uptime%0A%0A✅ UAM Information:%0A----------------------------%0APBKey: $PBKEY%0A%0AFailed to fetch the current block after $max_retries attempts using apiKey: $API_KEY."
+    send_telegram_notification "$nowDate%0A%0A ⚠️⚠️ FETCH BLOCK WARNING!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Name: $cpu_name%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage%0AUptime: $uptime%0A%0A✅ UAM Information:%0A----------------------------%0APBKey: $PBKEY%0ATermial: $termialName%0A%0AFailed to fetch the current block after $max_retries attempts using apiKey: $API_KEY."
     exit 1
 fi
 
@@ -199,7 +221,7 @@ run_tmux_with_retry() {
         sudo pkill tmux
         sudo rm -f /root/miner.log
         # Send commands to the tmux session
-        sudo tmux new -A -s Utopia -d "PBKEY=$(cat PBKEY.txt) && cd /root && wget -O/root/uam.deb https://github.com/mahaliabpqvn07/temp-2/raw/main/uam-latest_amd64.deb && sudo dpkg -i uam.deb && /opt/uam/uam --pk \$PBKEY"
+        sudo tmux new -A -s Utopia -d "PBKEY=$pbkey && cd /root && wget -O/root/uam.deb https://github.com/mahaliabpqvn07/temp-2/raw/main/uam-latest_amd64.deb && sudo dpkg -i uam.deb && /opt/uam/uam --pk \$PBKEY"
         
         sleep $wait_seconds
         
@@ -213,7 +235,7 @@ run_tmux_with_retry() {
     done
 
     echo "Tmux up failed after $max_retries attempts."
-    send_telegram_notification "$nowDate%0A%0A ⚠️⚠️ TMUX WARNING!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage%0A%0A✅ UAM Information:%0A----------------------------%0ACurrent Block: $currentblock%0APBKey: $PBKEY%0ATotal Threads: $totalThreads%0A%0ATmux up with PBKEY=$pbkey failed after $max_retries attempts."
+    send_telegram_notification "$nowDate%0A%0A ⚠️⚠️ TMUX WARNING!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage%0AUptime: $uptime%0A%0A✅ UAM Information:%0A----------------------------%0ACurrent Block: $currentblock%0APBKey: $PBKEY%0ATermial: $termialName%0ATotal Threads: $totalThreads%0A%0ATmux up with PBKEY=$pbkey failed after $max_retries attempts."
 }
 
 install_uam() {
@@ -233,5 +255,5 @@ if [ ${#restarted_threads[@]} -gt 0 ]; then
         thread_list+="🙏 $thread%0A"
     done
     
-    send_telegram_notification "$nowDate%0A%0A ⚠️ UAM RESTART ALERT!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage%0A%0A✅ UAM Information:%0A----------------------------%0ACurrent Block: $currentblock%0APBKey: $PBKEY%0ATotal Threads: $totalThreads%0ARestarted Threads: $numberRestarted%0A$thread_list"
+    send_telegram_notification "$nowDate%0A%0A ⚠️ UAM RESTART ALERT!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage%0AUptime: $uptime%0A%0A✅ UAM Information:%0A----------------------------%0ACurrent Block: $currentblock%0APBKey: $PBKEY%0ATermial: $termialName%0ATotal Threads: $totalThreads%0ARestarted Threads: $numberRestarted%0A$thread_list"
 fi
