@@ -173,7 +173,7 @@ fi
 
 echo -e "${GREEN}Current Block: $currentblock${NC}"
 block=$((currentblock - 24))
-totalThreads=$(tmux list-sessions | grep -c "^Utopia")
+totalThreads=$(sudo tmux list-sessions | grep -c "^Utopia")
 
 echo "PBKEY: $PBKEY"
 echo "Total Threads: $totalThreads"
