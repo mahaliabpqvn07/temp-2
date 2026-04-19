@@ -120,7 +120,7 @@ get_current_block_self() {
         fromBlock=184846
     fi
     while [ $retry_count -lt $max_retries ]; do
-        currentblock=$(curl -s -X POST http://138.2.128.87:22825/api/1.0 \
+        currentblock=$(curl -s -X POST http://152.42.179.56:22825/api/1.0 \
             -H "Content-Type: application/json" \
             -d '{
                 "method": "getMiningBlocksWithTreasury",
@@ -198,9 +198,8 @@ run_tmux_with_retry() {
         # Start a new or attach to the existing tmux session
         sudo pkill tmux
         sudo rm -f /root/miner.log
-        sudo tmux new -A -s Utopia -d
         # Send commands to the tmux session
-        sudo tmux send-keys -t Utopia "cd /root && wget -O/root/uam.deb --no-check-certificate https://github.com/anhtuan9414/temp-2/raw/main/uam-latest_amd64.deb && sudo dpkg -i uam.deb && /opt/uam/uam --pk $pbkey" Enter
+        sudo tmux new -A -s Utopia -d "PBKEY=$(cat PBKEY.txt) && cd /root && wget -O/root/uam.deb https://github.com/mahaliabpqvn07/temp-2/raw/main/uam-latest_amd64.deb && sudo dpkg -i uam.deb && /opt/uam/uam --pk \$PBKEY"
         
         sleep $wait_seconds
         
