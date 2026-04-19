@@ -173,7 +173,7 @@ fi
 
 echo -e "${GREEN}Current Block: $currentblock${NC}"
 block=$((currentblock - 24))
-totalThreads=$(sudo tmux list-sessions | grep -c "^Utopia")
+totalThreads=$(pgrep -f "/opt/uam/uam" > /dev/null && echo 1 || echo 0)
 
 echo "PBKEY: $PBKEY"
 echo "Total Threads: $totalThreads"
@@ -184,23 +184,25 @@ if [[ $totalThreads -lt 1 ]]; then
 else
   restarted_threads=()
   numberRestarted=0
+  minHours=35
+  runningTimeHours=$(sudo tmux list-sessions -F "#{session_name} #{session_created}" | awk '$1 == "Utopia" {print $2}' | xargs -I {} bash -c 'elapsed=$(( $(date +%s) - {} )); echo $((elapsed/3600))')
+  echo "Thread Running Time (Hours): $runningTimeHours"
   
   if [ $(sudo tail -n 500 /root/miner.log 2>&1 | grep -i "Error! System clock seems incorrect" | wc -l) -eq 1 ]; then 
-    sudo pkill tmux
+    sudo tmux has-session -t Utopia 2>/dev/null && sudo tmux kill-session -t Utopia
     echo -e "${RED}Error! System clock seems incorrect${NC}"
     restarted_threads+=("Error! System clock seems incorrect")
     ((numberRestarted+=1))
-  else
+  elif [ "$runningTimeHours" -ge "$minHours" ]; then
     lastblock=$(sudo tail -n 500 /root/miner.log 2>&1 | grep -v "sendto: Invalid argument" | awk '/Processed block/ {block=$NF} END {print block}')
-    echo "Last block: $lastblock"
-    runningTime=$(sudo tmux list-sessions -F "#{session_name} #{session_created}" | awk '$1 == "Utopia" {print $2}' | xargs -I {} bash -c 'elapsed=$(( $(date +%s) - {} )); echo $((elapsed/3600))')
-    if [[ -z "$lastblock" && "$runningTime" -ge 35 ]]; then
-        sudo pkill tmux
+    echo "Thread Last Block: $lastblock"
+    if [ -z "$lastblock" ]; then
+        sudo tmux has-session -t Utopia 2>/dev/null && sudo tmux kill-session -t Utopia
         echo -e "${RED}Not activated after ${runningTime} hours${NC}"
         restarted_threads+=("Not activated after ${runningTime} hours")
         ((numberRestarted+=1))
     elif [ "$lastblock" -le "$block" ]; then 
-        sudo pkill tmux
+        sudo tmux has-session -t Utopia 2>/dev/null && sudo tmux kill-session -t Utopia
         echo -e "${RED}Missed: $(($currentblock - $lastblock)) blocks${NC}"
         restarted_threads+=("Last Block: $lastblock - Missed: $(($currentblock - $lastblock)) blocks")
         ((numberRestarted+=1))
@@ -216,16 +218,17 @@ run_tmux_with_retry() {
     local wait_seconds=15
     local retry_count=0
     echo "Starting the reinstallation of threads..."
-    while [ ! -f /root/miner.log ] && [ $retry_count -lt $max_retries ]; do
+    while ! pgrep -f "/opt/uam/uam" > /dev/null && [ "$retry_count" -lt "$max_retries" ]; do
         # Start a new or attach to the existing tmux session
-        sudo pkill tmux
+        sudo tmux has-session -t Utopia 2>/dev/null && sudo tmux kill-session -t Utopia
         sudo rm -f /root/miner.log
+        # Start a new or attach to the existing tmux session
+        sudo tmux new -A -s Utopia -d
         # Send commands to the tmux session
-        sudo tmux new -A -s Utopia -d "PBKEY=$pbkey && cd /root && wget -O/root/uam.deb https://github.com/mahaliabpqvn07/temp-2/raw/main/uam-latest_amd64.deb && sudo dpkg -i uam.deb && /opt/uam/uam --pk \$PBKEY"
-        
+        sudo tmux send-keys -t Utopia "PBKEY=$pbkey && cd /root && wget -O/root/uam.deb https://github.com/mahaliabpqvn07/temp-2/raw/main/uam-latest_amd64.deb && sudo dpkg -i uam.deb && /opt/uam/uam --pk \$PBKEY" Enter
         sleep $wait_seconds
         
-        if [ -f /root/miner.log ]; then
+        if pgrep -f "/opt/uam/uam" > /dev/null; then
             return 0
         else
             echo "Tmux up failed"
