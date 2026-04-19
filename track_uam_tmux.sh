@@ -240,7 +240,6 @@ run_tmux_with_retry() {
 
 install_uam() {
     local pbkey=$1
-    echo "Starting the reinstallation of threads..."
     run_tmux_with_retry "$pbkey"
     echo -e "${GREEN}Installed ${total_threads} threads successfully!${NC}"
 }
