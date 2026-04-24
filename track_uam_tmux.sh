@@ -31,7 +31,7 @@ send_telegram_notification() {
 
         # Check if the response contains "ok":true
         if [[ "$response" == *'"ok":true'* ]]; then
-            echo "✅ Telegram message sent successfully."
+            echo -e "${GREEN}✅ Telegram message sent successfully.${NC}"
             break  # success
         fi
 
