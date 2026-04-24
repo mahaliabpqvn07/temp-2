@@ -173,7 +173,7 @@ fi
 
 echo -e "${GREEN}Current Block: $currentblock${NC}"
 block=$((currentblock - 24))
-totalThreads=$(pgrep -f "uam" > /dev/null && echo 1 || echo 0)
+totalThreads=$(pgrep -f "/opt/uam/uam" > /dev/null && echo 1 || echo 0)
 
 echo "PBKEY: $PBKEY"
 echo "Total Threads: $totalThreads"
