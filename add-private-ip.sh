@@ -13,6 +13,7 @@ fi
 
 PUBLIC_IP=$(ip -4 addr show $IFACE | awk '/inet / && $2 ~ /\/32/ && $2 !~ /^10\./ {print $2}' | head -n1)
 PRIVATE_IP="10.0.0.10/24"
+GATEWAY=$(ip route get 1.1.1.1 | awk -v ip="$(echo $PUBLIC_IP | cut -d/ -f1)" '$0 ~ ip {print $3}')
 
 cat <<EOF | sudo tee /etc/netplan/00-installer-config.yaml
 network:
@@ -22,6 +23,9 @@ network:
       addresses:
         - $PUBLIC_IP
         - $PRIVATE_IP
+      routes:
+        - to: default
+          via: $GATEWAY
 EOF
 
 # fix permission
