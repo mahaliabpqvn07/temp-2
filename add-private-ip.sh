@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # APPLY FOR OVH CLOUD
-
+sudo iptables -F
 IFACE=$(ip link show | awk -F: '/^[0-9]+:/ {print $2}' | tr -d ' ' | grep -v '^lo$' | head -n1)
 
 if [ -z "$IFACE" ]; then
