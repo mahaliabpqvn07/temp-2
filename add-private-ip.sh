@@ -12,8 +12,8 @@ else
 	echo "First network interface: $IFACE"
 fi
 
-PUBLIC_IP=$(ip -4 addr show $IFACE | awk '/inet / && $2 ~ /\/32/ && $2 !~ /^10\./ {print $2}' | cut -d/ -f1 | head -n1)
-GATEWAY=$(ip route get 1.1.1.1 | awk -v ip="$PUBLIC_IP" '$0 ~ ip {print $3}')
+PUBLIC_IP=$(ip -4 addr show $IFACE | awk '/inet / && $2 ~ /\/32/ && $2 !~ /^10\./ {print $2}' | head -n1)
+GATEWAY=$(ip route get 1.1.1.1 | awk -v ip="$(echo $PUBLIC_IP | cut -d/ -f1)" '$0 ~ ip {print $3}')
 
 cat <<EOF | sudo tee /etc/netplan/00-installer-config.yaml
 network:
