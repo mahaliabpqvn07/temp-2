@@ -11,7 +11,7 @@ else
 	echo "First network interface: $IFACE"
 fi
 
-PUBLIC_IP=$(ip -4 addr show $IFACE | awk '/inet / && $2 ~ /\/32/ && $2 !~ /^10\./ {print $2}' | head -n1)
+PUBLIC_IP=$(ip -4 addr show $IFACE | awk '/inet / && $2 !~ /^10\./ {print $2}' | head -n1)
 PRIVATE_IP="10.0.0.10/24"
 GATEWAY=$(ip route get 1.1.1.1 | awk '{print $3}')
 
