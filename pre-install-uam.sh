@@ -1,6 +1,8 @@
 #!/bin/sh
+export NEEDRESTART_MODE=l
+export DEBIAN_FRONTEND=noninteractive
 sudo apt update
-sudo apt install nload && sudo NEEDRESTART_MODE=l DEBIAN_FRONTEND=noninteractive apt install -y docker.io && sudo sed -ie 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1'/g /etc/sysctl.conf && sudo sysctl --system && sudo apt install docker-compose -y
+sudo apt install nload && sudo apt install -y docker.io && sudo sed -ie 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1'/g /etc/sysctl.conf && sudo sysctl --system && sudo apt install docker-compose -y
 sudo chmod 666 /var/run/docker.sock
 sudo iptables -F
 sudo iptables -A INPUT -p all -j ACCEPT
