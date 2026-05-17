@@ -172,7 +172,7 @@ if [ -z "$currentblock" ] || [ "$currentblock" == "null" ]; then
 fi
 
 echo -e "${GREEN}Current Block: $currentblock${NC}"
-block=$((currentblock - 24))
+block=$((currentblock - 15))
 totalThreads=$(pgrep -f "/opt/uam/uam" > /dev/null && echo 1 || echo 0)
 
 echo "PBKEY: $PBKEY"
@@ -198,13 +198,13 @@ else
     echo "Thread Last Block: $lastblock"
     if [ -z "$lastblock" ]; then
         sudo tmux has-session -t Utopia 2>/dev/null && sudo tmux kill-session -t Utopia
-        echo -e "${RED}Not activated after ${runningTime} hours${NC}"
-        restarted_threads+=("Not activated after ${runningTime} hours")
+        echo -e "${RED}Not activated after ${runningTimeHours} hours${NC}"
+        restarted_threads+=("Not activated after ${runningTimeHours} hours")
         ((numberRestarted+=1))
     elif [ "$lastblock" -le "$block" ]; then 
         sudo tmux has-session -t Utopia 2>/dev/null && sudo tmux kill-session -t Utopia
         echo -e "${RED}Missed: $(($currentblock - $lastblock)) blocks${NC}"
-        restarted_threads+=("Last Block: $lastblock - Missed: $(($currentblock - $lastblock)) blocks")
+        restarted_threads+=("Uptime: $runningTimeHours hours - Last Block: $lastblock - Missed: $(($currentblock - $lastblock)) blocks")
         ((numberRestarted+=1))
     else 
         echo -e "${GREEN}Passed${NC}"
