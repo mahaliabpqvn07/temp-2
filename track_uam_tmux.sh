@@ -186,7 +186,16 @@ else
   numberRestarted=0
   minHours=35
   runningTimeHours=$(sudo tmux list-sessions -F "#{session_name} #{session_created}" | awk '$1 == "Utopia" {print $2}' | xargs -I {} bash -c 'elapsed=$(( $(date +%s) - {} )); echo $((elapsed/3600))')
-  echo "Thread Running Time (Hours): $runningTimeHours"
+  runningTimeDays=$(($runningTimeHours/24))
+  runningTimeFormatted=$runningTimeDays
+
+  if [ "$runningTimeDays" -ge 2 ]; then
+    runningTimeFormatted="$runningTimeDays day$([ "$runningTimeDays" -gt 2 ] && echo s)"
+  else
+    runningTimeFormatted="$runningTimeHours hour$([ "$runningTimeHours" -gt 1 ] && echo s)"
+  fi
+  
+  echo "Thread Running Time: $runningTimeDays"
   
   if [ $(sudo tail -n 500 /root/miner.log 2>&1 | grep -i "Error! System clock seems incorrect" | wc -l) -eq 1 ]; then 
     sudo tmux has-session -t Utopia 2>/dev/null && sudo tmux kill-session -t Utopia
@@ -198,13 +207,13 @@ else
     echo "Thread Last Block: $lastblock"
     if [ -z "$lastblock" ]; then
         sudo tmux has-session -t Utopia 2>/dev/null && sudo tmux kill-session -t Utopia
-        echo -e "${RED}Not activated after ${runningTimeHours} hours${NC}"
-        restarted_threads+=("Not activated after ${runningTimeHours} hours")
+        echo -e "${RED}Not activated after $runningTimeFormatted ${NC}"
+        restarted_threads+=("Not activated after ${runningTimeFormatted} hours")
         ((numberRestarted+=1))
     elif [ "$lastblock" -le "$block" ]; then 
         sudo tmux has-session -t Utopia 2>/dev/null && sudo tmux kill-session -t Utopia
         echo -e "${RED}Missed: $(($currentblock - $lastblock)) blocks${NC}"
-        restarted_threads+=("Uptime: $runningTimeHours hours - Last Block: $lastblock - Missed: $(($currentblock - $lastblock)) blocks")
+        restarted_threads+=("Uptime: $runningTimeFormatted - Last Block: $lastblock - Missed: $(($currentblock - $lastblock)) blocks")
         ((numberRestarted+=1))
     else 
         echo -e "${GREEN}Passed${NC}"
