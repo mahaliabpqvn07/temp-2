@@ -195,7 +195,7 @@ else
     runningTimeFormatted="$runningTimeHours hour$([ "$runningTimeHours" -gt 1 ] && echo s)"
   fi
   
-  echo "Thread Running Time: $runningTimeDays"
+  echo "Thread Running Time: $runningTimeFormatted"
   
   if [ $(sudo tail -n 500 /root/miner.log 2>&1 | grep -i "Error! System clock seems incorrect" | wc -l) -eq 1 ]; then 
     sudo tmux has-session -t Utopia 2>/dev/null && sudo tmux kill-session -t Utopia
