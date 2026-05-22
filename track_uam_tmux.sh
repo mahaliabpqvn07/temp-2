@@ -190,7 +190,7 @@ else
   runningTimeFormatted=$runningTimeDays
 
   if [ "$runningTimeDays" -ge 2 ]; then
-    runningTimeFormatted="$runningTimeDays day$([ "$runningTimeDays" -gt 2 ] && echo s)"
+    runningTimeFormatted="$runningTimeDays day$([ "$runningTimeDays" -gt 1 ] && echo s)"
   else
     runningTimeFormatted="$runningTimeHours hour$([ "$runningTimeHours" -gt 1 ] && echo s)"
   fi
