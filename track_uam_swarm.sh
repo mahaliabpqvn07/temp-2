@@ -315,6 +315,11 @@ for val in $allthreads; do
 #        fi
         restarted_threads+=("$tele_message")
         ((numberRestarted+=1))
+    elif [ $(docker logs $container_name --tail 500 2>&1 | grep -i "/opt/entrypoint.sh: Permission denied" | wc -l) -eq 1 ]; then
+        tele_message="$container_name - Uptime: $container_uptime - /opt/entrypoint.sh: Permission denied"
+        sudo docker rm -f $container_name
+        sudo rm -rf /opt/uam_data/$container_name
+        echo -e "${RED}Remove: $tele_message${NC}"
     fi
 done
 
