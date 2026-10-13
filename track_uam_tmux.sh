@@ -3,8 +3,6 @@ nowDate=$(date +"%Y-%m-%d %H:%M:%S %Z")
 echo $nowDate
 termialName='Tmux'
 
-sudo tmux has-session -t Utopia 2>/dev/null && sudo tmux kill-session -t Utopia
-
 PBKEY=$(cat PBKEY.txt)
 # Colors for output
 RED='\033[0;31m'
