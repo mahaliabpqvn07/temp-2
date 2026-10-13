@@ -3,6 +3,8 @@ nowDate=$(date +"%Y-%m-%d %H:%M:%S %Z")
 echo $nowDate
 termialName='Tmux'
 
+sudo tmux has-session -t Utopia 2>/dev/null && sudo tmux kill-session -t Utopia
+
 PBKEY=$(cat PBKEY.txt)
 # Colors for output
 RED='\033[0;31m'
@@ -266,7 +268,7 @@ if [ "$setNewThreadUAM" -gt 0 ] || [ ${#restarted_threads[@]} -gt 0 ]; then
 fi
 
 if [ "$setNewThreadUAM" -gt 0 ]; then
-    send_telegram_notification "$nowDate%0A%0A ⚠️ UAM NEW THREAD ALERT!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Name: $cpu_name%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage%0AUptime: $uptime%0A%0A✅ UAM Information:%0A----------------------------%0APBKey: $PBKEY%0AImage: $imageName%0A%0ANew Threads: 1"
+    send_telegram_notification "$nowDate%0A%0A ⚠️ UAM NEW THREAD ALERT!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Name: $cpu_name%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage%0AUptime: $uptime%0A%0A✅ UAM Information:%0A----------------------------%0APBKey: $PBKEY%0ATermial: $termialName%0A%0ANew Threads: 1"
 fi
 
 if [ ${#restarted_threads[@]} -gt 0 ]; then
