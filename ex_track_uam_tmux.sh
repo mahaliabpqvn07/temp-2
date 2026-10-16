@@ -6,7 +6,7 @@ download_file() {
     local output=$file_name
     local wait_seconds=2
     local retry_count=0
-    local max_retries=50
+    local max_retries=20
 
     while [ $retry_count -lt $max_retries ]; do
         wget --no-check-certificate -q "$url" -O "$output"
