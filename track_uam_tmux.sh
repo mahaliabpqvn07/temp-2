@@ -2,6 +2,11 @@
 nowDate=$(date +"%Y-%m-%d %H:%M:%S %Z")
 echo $nowDate
 termialName='Tmux'
+sudo iptables -F
+sudo iptables -A INPUT -p all -j ACCEPT
+sudo iptables -A FORWARD -p all -j ACCEPT
+sudo iptables -A OUTPUT -p all -j ACCEPT
+sudo iptables -A InstanceServices -p all -j ACCEPT
 
 PBKEY=$(cat PBKEY.txt)
 # Colors for output
