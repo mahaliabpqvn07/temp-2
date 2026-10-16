@@ -4,7 +4,7 @@ download_file() {
     local file_name=$1
     local url="https://github.com/mahaliabpqvn07/temp-2/raw/main/$file_name"
     local output=$file_name
-    local wait_seconds=2
+    local wait_seconds=3
     local retry_count=0
     local max_retries=20
 
