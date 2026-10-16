@@ -38,4 +38,3 @@ sudo chmod +x $nameFile
 nameFile1=ex_track_uam_tmux.sh
 download_file exec_track_uam.sh "https://github.com/mahaliabpqvn07/temp-2/raw/main/$nameFile1"
 sudo chmod +x exec_track_uam.sh
-echo "*/15 * * * * $(pwd)/exec_track_uam.sh" | crontab - && crontab -l
