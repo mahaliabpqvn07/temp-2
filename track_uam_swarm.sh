@@ -175,7 +175,7 @@ fi
 uamversion=$(docker exec uam_1 ./opt/uam/uam --version)
 
 if [ "$uamversion" != "Utopia alternative miner (UAM) - version 1.3.1527" ]; then
-    send_telegram_notification "$nowDate%0A%0A ⚠️⚠️ UAM OLD VERSION WARNING!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Name: $cpu_name%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage%0AUptime: $uptime"
+    send_telegram_notification "$nowDate%0A%0A ⚠️⚠️ UAM OLD VERSION WARNING!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Name: $cpu_name%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage%0AUptime: $uptime%0AUAM Version: $uamversion"
 fi
 
 # Retry parameters
