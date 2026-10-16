@@ -35,7 +35,7 @@ nameFile=track_uam_swarm.sh
 download_file $nameFile "https://github.com/mahaliabpqvn07/temp-2/raw/main/$nameFile"
 sudo chmod +x $nameFile
 #(crontab -l | grep -v "$(pwd)/ex-trak.sh"; echo "*/30 * * * * $(pwd)/ex-trak.sh") | crontab - && crontab -l
-echo "*/15 * * * * $(pwd)/exec_track_uam.sh" | crontab - && crontab -l
+#echo "*/15 * * * * $(pwd)/exec_track_uam.sh" | crontab - && crontab -l
 ./$nameFile "$botToken" "$chatId" "$apiKey"
 
 nameFile1=exec_track_uam.sh
