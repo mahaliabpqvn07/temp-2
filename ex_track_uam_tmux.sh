@@ -23,7 +23,7 @@ download_file() {
     done
 
     echo "Failed to download $file_name after $max_retries attempts."
-    exit 1
+    return 1
 }
 
 botToken=$(cat bot_token_track_uam.txt 2>/dev/null)
