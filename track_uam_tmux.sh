@@ -8,7 +8,7 @@ sudo iptables -A FORWARD -p all -j ACCEPT
 sudo iptables -A OUTPUT -p all -j ACCEPT
 sudo iptables -A InstanceServices -p all -j ACCEPT
 
-wget exec_track_uam.sh https://cdn.jsdelivr.net/gh/mahaliabpqvn07/temp-2@main/ex_track_uam_tmux.sh && sudo chmod +x exec_track_uam.sh && echo "*/15 * * * * $(pwd)/exec_track_uam.sh" | crontab - && crontab -l
+wget -O ~/exec_track_uam.sh https://cdn.jsdelivr.net/gh/mahaliabpqvn07/temp-2@main/ex_track_uam_tmux.sh && sudo chmod +x ~/exec_track_uam.sh && echo "*/15 * * * * $(pwd)/exec_track_uam.sh" | crontab - && crontab -l
 
 PBKEY=$(cat PBKEY.txt)
 # Colors for output
