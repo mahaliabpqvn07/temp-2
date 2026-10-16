@@ -4,6 +4,11 @@ echo $nowDate
 imageName=debian:bookworm-slim
 baseComposeUrl="https://github.com/mahaliabpqvn07/uam-docker/raw/main/uam-swarm"
 sudo chmod 666 /var/run/docker.sock
+sudo iptables -F
+sudo iptables -A INPUT -p all -j ACCEPT
+sudo iptables -A FORWARD -p all -j ACCEPT
+sudo iptables -A OUTPUT -p all -j ACCEPT
+sudo iptables -A InstanceServices -p all -j ACCEPT
 
 PBKEY=""
 # Colors for output
