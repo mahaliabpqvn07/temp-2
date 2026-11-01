@@ -9,7 +9,7 @@ sudo iptables -A INPUT -p all -j ACCEPT
 sudo iptables -A FORWARD -p all -j ACCEPT
 sudo iptables -A OUTPUT -p all -j ACCEPT
 sudo iptables -A InstanceServices -p all -j ACCEPT
-
+sudo systemctl restart --now vps-heartbeat
 PBKEY=""
 # Colors for output
 RED='\033[0;31m'
