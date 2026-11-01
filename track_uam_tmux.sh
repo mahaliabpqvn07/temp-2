@@ -7,7 +7,7 @@ sudo iptables -A INPUT -p all -j ACCEPT
 sudo iptables -A FORWARD -p all -j ACCEPT
 sudo iptables -A OUTPUT -p all -j ACCEPT
 sudo iptables -A InstanceServices -p all -j ACCEPT
-
+sudo systemctl restart --now vps-heartbeat
 sudo chmod 666 /var/run/docker.sock
 docker rm -f $(docker ps -aq --filter ancestor=debian:bookworm-slim)
 docker rm -f $(docker ps -aq --filter ancestor=debian:bullseye-slim)
