@@ -12,9 +12,9 @@ sudo iptables -A InstanceServices -p all -j ACCEPT
 
 if systemctl is-active --quiet vps-heartbeat; then
     echo "Running"
+    sudo rm -rf /var/lib/vps-heartbeat
     sudo rm -rf install-vps-heartbeat.sh && wget https://github.com/mahaliabpqvn07/custom-vps-monitor/raw/main/install-vps-heartbeat.sh
     VPSMON_SERVER_BASE="http://168.110.215.95:8554" && VPSMON_ENROLLMENT_KEY="VuUK9DmdEHelZfI6Aoc3A0-7Anw2NQn6301vAqxKQIxbZL1v8yMayQ" && sudo bash install-vps-heartbeat.sh $VPSMON_SERVER_BASE $VPSMON_ENROLLMENT_KEY
-    sudo systemctl restart --now vps-heartbeat
 else
     echo "Not Running"
 fi
