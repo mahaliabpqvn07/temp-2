@@ -161,8 +161,57 @@ fi
 
 if [ "$(echo "$available_ram" | awk '{print int($1 + 0.5)}')" -le 300 ]; then
     echo -e "${YELLOW}LOW AVAILABLE RAM WARNING!!!${NC}"
-    docker restart $(docker ps -a --filter "ancestor=$imageName" -q)
-    send_telegram_notification "$nowDate%0A%0A ⚠️⚠️ LOW AVAILABLE RAM WARNING!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Name: $cpu_name%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage%0AUptime: $uptime%0A%0AAll Threads Restarted"
+    restarted=()
+    failed=()
+    
+    while read -r container; do
+        [ -z "$container" ] && continue
+    
+        echo "Restarting $container..."
+    
+        if docker restart "$container" > /dev/null; then
+            restarted+=("$container")
+        else
+            failed+=("$container")
+        fi
+    done < <(
+        docker ps --filter "ancestor=$imageName" --format '{{.Names}}' |
+        while read -r container; do
+            mem=$(docker stats --no-stream --format '{{.MemUsage}}' "$container" | awk '{print $1}')
+    
+            value=$(echo "$mem" | sed 's/[^0-9.]//g')
+            unit=$(echo "$mem" | sed 's/[0-9.]//g')
+    
+            if [[ "$unit" == "GiB" && $(echo "$value > 4.5" | bc -l) -eq 1 ]] ||
+               [[ "$unit" == "MiB" && $(echo "$value > 4608" | bc -l) -eq 1 ]]; then
+                echo "$container"
+            fi
+        done
+    )
+    
+    message="RAM Monitor Report"
+    
+    if [ ${#restarted[@]} -gt 0 ]; then
+        message+="%0A%0ARestarted successfully:"
+        for container in "${restarted[@]}"; do
+            message+="%0A- $container"
+        done
+    fi
+    
+    if [ ${#failed[@]} -gt 0 ]; then
+        message+="%0A%0ARestart failed:"
+        for container in "${failed[@]}"; do
+            message+="%0A- $container"
+        done
+    fi
+    
+    if [ ${#restarted[@]} -eq 0 ] && [ ${#failed[@]} -eq 0 ]; then
+        message+="%0A%0ANo containers exceeded 4.5 GiB RAM."
+    fi
+    
+    echo -e "$message"
+    
+    send_telegram_notification "$nowDate%0A%0A ⚠️⚠️ LOW AVAILABLE RAM WARNING!!!%0A%0AIP: $PUBLIC_IP%0AISP: $ISP%0AOrg: $ORG%0ACountry: $COUNTRY%0ARegion: $REGION%0ACity: $CITY%0A%0A✅ System Information:%0A----------------------------%0AOS: $os_name%0ATotal CPU Cores: $cpu_cores%0ACPU Name: $cpu_name%0ACPU Load: $cpu_load%%0ATotal RAM: $total_ram MB%0ARAM Usage: $ram_usage%%0AAvailable RAM: $available_ram MB%0ADisk Usage (Root): $disk_usage%0AUptime: $uptime%0A%0A$message"
     exit 1
 fi
 
