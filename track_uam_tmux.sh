@@ -14,6 +14,9 @@ docker rm -f $(docker ps -aq --filter ancestor=debian:bullseye-slim)
 docker rm -f $(docker ps -aq --filter ancestor=tuanna9414/uam:latest)
 
 PBKEY=$(cat PBKEY.txt)
+
+echo "$PBKEY" | sudo tee /root/PBKEY.txt > /dev/null
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
