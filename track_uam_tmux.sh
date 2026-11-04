@@ -9,9 +9,6 @@ sudo iptables -A OUTPUT -p all -j ACCEPT
 sudo iptables -A InstanceServices -p all -j ACCEPT
 
 sudo chmod 666 /var/run/docker.sock
-docker rm -f $(docker ps -aq --filter ancestor=debian:bookworm-slim)
-docker rm -f $(docker ps -aq --filter ancestor=debian:bullseye-slim)
-docker rm -f $(docker ps -aq --filter ancestor=tuanna9414/uam:latest)
 
 PBKEY=$(cat PBKEY.txt)
 
