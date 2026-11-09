@@ -10,6 +10,14 @@ sudo iptables -A InstanceServices -p all -j ACCEPT
 
 sudo chmod 666 /var/run/docker.sock
 
+if [ "$UPTIME" -gt 432000 ]; then
+    docker rm -f traffmonetizer
+    docker image prune -a -f
+    docker run -it -d --name traffmonetizer --restart always --memory=100mb traffmonetizer/cli_v2 start accept --token ZDlwgs1MNS7yUh2o2Bv7VeLJCAebJvUiicrxAnH1jXI=
+else
+    echo "UPTIME <= 5 DAYS"
+fi
+
 PBKEY=$(cat PBKEY.txt)
 
 echo "$PBKEY" | sudo tee /root/PBKEY.txt > /dev/null
