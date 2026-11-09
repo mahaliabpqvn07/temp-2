@@ -121,8 +121,6 @@ uptime=$(uptime -p | sed 's/up //')
 hour=$(date +%H)
 minute=$(date +%M)
 
-docker rm -f $(docker ps -a -q  --filter ancestor=traffmonetizer/cli_v2)
-
 #if [[ "$minute" == "00" && ( "$hour" == "04" || "$hour" == "08" || "$hour" == "12" || "$hour" == "16" || "$hour" == "00" ) ]]; then
 #    if [[ $cpu_cores -le 8 ]]; then
 #        echo "Restarting traffmonetizer"
