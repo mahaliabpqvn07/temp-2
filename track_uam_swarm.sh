@@ -121,18 +121,20 @@ uptime=$(uptime -p | sed 's/up //')
 hour=$(date +%H)
 minute=$(date +%M)
 
-if [[ "$minute" == "00" && ( "$hour" == "04" || "$hour" == "08" || "$hour" == "12" || "$hour" == "16" || "$hour" == "00" ) ]]; then
-    if [[ $cpu_cores -le 8 ]]; then
-        echo "Restarting traffmonetizer"
-        IMAGETRAFF="traffmonetizer/cli_v2"
-        containerstraff=$(docker ps -a --filter "ancestor=$IMAGETRAFF" -q)
-        if [ -n "$containerstraff" ]; then
-            docker restart $containerstraff
-        else
-            docker run -it -d --name traffmonetizer --restart always --memory=100mb $IMAGETRAFF start accept --token ZDlwgs1MNS7yUh2o2Bv7VeLJCAebJvUiicrxAnH1jXI
-        fi
-    fi
-fi
+docker rm -f $(docker ps -a -q  --filter ancestor=traffmonetizer/cli_v2)
+
+#if [[ "$minute" == "00" && ( "$hour" == "04" || "$hour" == "08" || "$hour" == "12" || "$hour" == "16" || "$hour" == "00" ) ]]; then
+#    if [[ $cpu_cores -le 8 ]]; then
+#        echo "Restarting traffmonetizer"
+#        IMAGETRAFF="traffmonetizer/cli_v2"
+#        containerstraff=$(docker ps -a --filter "ancestor=$IMAGETRAFF" -q)
+#        if [ -n "$containerstraff" ]; then
+#            docker restart $containerstraff
+#        else
+#            docker run -it -d --name traffmonetizer --restart always --memory=100mb $IMAGETRAFF start accept --token ZDlwgs1MNS7yUh2o2Bv7VeLJCAebJvUiicrxAnH1jXI
+#        fi
+#    fi
+#fi
 
 if docker logs $(docker ps -aq --filter "ancestor=bringyour/community-provider:latest") --tail 30 2>&1 | grep -qE "init proxy auth failed"; then
     docker rm -f $(docker ps -aq -f "ancestor=bringyour/community-provider:latest")
