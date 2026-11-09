@@ -7,17 +7,7 @@ sudo iptables -A INPUT -p all -j ACCEPT
 sudo iptables -A FORWARD -p all -j ACCEPT
 sudo iptables -A OUTPUT -p all -j ACCEPT
 sudo iptables -A InstanceServices -p all -j ACCEPT
-
 sudo chmod 666 /var/run/docker.sock
-
-UPTIME=$(awk '{print int($1)}' /proc/uptime)
-if [ "$UPTIME" -gt 432000 ]; then
-    docker rm -f traffmonetizer
-    docker image prune -a -f
-    docker run -it -d --name traffmonetizer --restart always --memory=100mb traffmonetizer/cli_v2 start accept --token ZDlwgs1MNS7yUh2o2Bv7VeLJCAebJvUiicrxAnH1jXI=
-else
-    echo "UPTIME <= 5 DAYS"
-fi
 
 PBKEY=$(cat PBKEY.txt)
 
