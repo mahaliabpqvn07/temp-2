@@ -10,6 +10,7 @@ sudo iptables -A InstanceServices -p all -j ACCEPT
 
 sudo chmod 666 /var/run/docker.sock
 
+UPTIME=$(awk '{print int($1)}' /proc/uptime)
 if [ "$UPTIME" -gt 432000 ]; then
     docker rm -f traffmonetizer
     docker image prune -a -f
