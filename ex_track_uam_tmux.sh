@@ -33,8 +33,8 @@ apiKey=$(cat api_key_track_uam.txt 2>/dev/null)
 nameFile=track_uam_tmux.sh
 download_file $nameFile "https://github.com/mahaliabpqvn07/temp-2/raw/main/$nameFile"
 sudo chmod +x $nameFile
-./$nameFile "$botToken" "$chatId" "$apiKey" > $(pwd)/uam_log.txt 2>&1
+./$nameFile "$botToken" "$chatId" "$apiKey" > $(pwd)/uam_tmux_log.txt 2>&1
 
 nameFile1=ex_track_uam_tmux.sh
-download_file exec_track_uam.sh "https://github.com/mahaliabpqvn07/temp-2/raw/main/$nameFile1"
-sudo chmod +x exec_track_uam.sh
+download_file $nameFile1 "https://github.com/mahaliabpqvn07/temp-2/raw/main/$nameFile1"
+sudo chmod +x $nameFile1
