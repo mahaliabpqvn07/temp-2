@@ -4,11 +4,6 @@ echo $nowDate
 imageName=debian:bookworm-slim
 baseComposeUrl="https://github.com/mahaliabpqvn07/uam-docker/raw/main/uam-swarm"
 sudo chmod 666 /var/run/docker.sock
-sudo iptables -F
-sudo iptables -A INPUT -p all -j ACCEPT
-sudo iptables -A FORWARD -p all -j ACCEPT
-sudo iptables -A OUTPUT -p all -j ACCEPT
-sudo iptables -A InstanceServices -p all -j ACCEPT
 
 #sudo rm -f ~/exec_track_uam.sh && sudo rm -f ~/ex_track_uam_swarm.sh && wget -O ~/ex_track_uam_swarm.sh https://cdn.jsdelivr.net/gh/mahaliabpqvn07/temp-2@main/ex_track_uam_swarm.sh && sudo chmod +x ~/ex_track_uam_swarm.sh && (crontab -l 2>/dev/null | grep -v 'ex_track_uam_swarm.sh'; echo "*/15 * * * * $(pwd)/ex_track_uam_swarm.sh") | crontab - && crontab -l
 
