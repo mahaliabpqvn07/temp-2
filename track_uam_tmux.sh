@@ -184,7 +184,7 @@ if [ -z "$currentblock" ] || [ "$currentblock" == "null" ]; then
 fi
 
 echo -e "${GREEN}Current Block: $currentblock${NC}"
-block=$((currentblock - 20))
+block=$((currentblock - 15))
 totalThreads=$(pgrep -f "/opt/uam/uam" > /dev/null && echo 1 || echo 0)
 
 echo "PBKEY: $PBKEY"
