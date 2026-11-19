@@ -7,9 +7,6 @@ sudo chmod 666 /var/run/docker.sock
 
 #sudo rm -f ~/exec_track_uam.sh && sudo rm -f ~/ex_track_uam_swarm.sh && wget -O ~/ex_track_uam_swarm.sh https://cdn.jsdelivr.net/gh/mahaliabpqvn07/temp-2@main/ex_track_uam_swarm.sh && sudo chmod +x ~/ex_track_uam_swarm.sh && (crontab -l 2>/dev/null | grep -v 'ex_track_uam_swarm.sh'; echo "*/15 * * * * $(pwd)/ex_track_uam_swarm.sh") | crontab - && crontab -l
 
-sudo rm -rf install-vps-heartbeat.sh && wget https://github.com/mahaliabpqvn07/custom-vps-monitor/raw/main/install-vps-heartbeat.sh
-VPSMON_SERVER_BASE="http://168.110.215.95:8554" && VPSMON_ENROLLMENT_KEY="VuUK9DmdEHelZfI6Aoc3A0-7Anw2NQn6301vAqxKQIxbZL1v8yMayQ" && sudo bash install-vps-heartbeat.sh $VPSMON_SERVER_BASE $VPSMON_ENROLLMENT_KEY
-
 PBKEY=""
 # Colors for output
 RED='\033[0;31m'
